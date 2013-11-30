@@ -25,6 +25,7 @@ lib:
 	$(LD) $(LIBOBJS) -r -o $(LIB) 
 
 asmapi: 
+	@./prototypes.sh
 	$(AS) ./main.S $(SFLAGS) -o main.o
 	$(LD) main.o $(LFLAGS) -o $(SEXE)
 	$(CC) ./main.c $(CFLAGS) $(LFLAGS) -o $(CEXE)
