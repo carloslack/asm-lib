@@ -24,7 +24,7 @@ nl: .byte 0xa /* new line */
 #
 
 /*  
- *  size_t s_log(const char *str)
+ *  _sig_:size_t s_log(const char *str);
  *  @in str
  *  @out %eax [number of characters processed]
  */
@@ -67,7 +67,7 @@ end_s_log:
 #
 
 /*
- *  size_t s_strlen(const char *str)
+ *  _sig_:size_t s_strlen(const char *str);
  *  @in str
  *  @out %eax [length of given string]
  */
@@ -93,7 +93,7 @@ endstrlen:
     ret
 
 /*
- *  size_t_s_strncmp(const char *s1, const char *s2, size_t n);
+ *  _sig_:size_t s_strncmp(const char *s1, const char *s2, size_t n);
  *  @in 8(%esp) [s1]
  *  @in 12(%esp) [s2]
  *  @in 16(%esp) [n]
@@ -124,7 +124,7 @@ endstrncmp:
 #
 
 /*
- *  int_s_mod(unsigned int x, unsigned int y)
+ *  _sig_:int s_mod(unsigned int x, unsigned int y);
  *  @in 8(%esp) [x]
  *  @in 12(%esp) [y]
  *  @out %ax [remainder]
@@ -148,7 +148,7 @@ ENTRY s_mod
     ret
 
 /*
- *  int s_bitscandw(int direction, int dword);
+ *  _sig_:int s_bitscandw(int direction, int dword);
  *  @in 8(%esp) [direction]
  *  @in 12(%esp) [dword]
  *  @out %eax [offset]   
@@ -204,7 +204,7 @@ ENTRY s_bitscandw
 #
 
 /*
- *  int_s_memset(void *s, int c, size_t n);
+ *  _sig_:int s_memset(void *s, int c, size_t n);
  *  @in 8(%esp) [s]
  *  @in 12(%esp) [c]
  *  @in 16(%esp) [n]
