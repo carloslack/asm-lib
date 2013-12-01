@@ -1,20 +1,24 @@
-#
-# libS.inc
-#
-# Include from libS.S
-#
+/**
+ *  libS.inc
+ *
+ * Header file of libS.S
+ */
 
-# ENTRY is libS local
+/**
+ * ENTRY function prototype macro
+ *
+ *
+ */
 .macro ENTRY fn
     .globl \fn   
     .type \fn, @function;\fn:
 .endm
 
-/*
+/**
  * bforward: starts at bit 0 
  * breverse: starts at most significant bit 
  * 
- *  @see s_bitscan
+ *  @see s_bitscandw
  */
 .equ bforward, 0
 .equ breverse, 1

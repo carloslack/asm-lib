@@ -1,2 +1,2 @@
 #!/bin/bash
-grep _sig_ libS.S |cut -d ":" -f2 > main.h
+cat libS.S | grep -o "fn.*" |cut -d " " -f2-9999 >main.h

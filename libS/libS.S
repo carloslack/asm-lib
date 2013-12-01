@@ -1,4 +1,4 @@
-/*
+/**
  *
  *  hash  <carloslack@gmail.com>
  *
@@ -6,13 +6,17 @@
  *
  */
 
-# Header file for ENTRY macro
+/**
+ *  Header file for ENTRY macro
+ */
 .include "libS.inc"
 
 .section .rodata
-nl: .byte 0xa /* new line */
+nl: .byte 0xa /**< new line */
 
-# syscall numbers
+/**
+ * Syscall numbers
+ */
 .equ SYS_exit, 1
 .equ SYS_read,  3
 .equ SYS_write, 4
@@ -23,10 +27,10 @@ nl: .byte 0xa /* new line */
 # Debug functions
 #
 
-/*  
- *  _sig_:size_t s_log(const char *str);
- *  @in str
- *  @out %eax [number of characters processed]
+/**  
+ *  \fn size_t s_log(const char *str);
+ *  @param str
+ *  @return %eax [number of characters processed]
  */
 ENTRY s_log
     pushl %ebp
@@ -36,7 +40,7 @@ ENTRY s_log
     movl 8(%esp), %eax
 
     subl $4, %esp
-    
+
     pushl %eax
     call s_strlen
     movl %eax, -4(%ebp)
@@ -50,15 +54,9 @@ ENTRY s_log
     movl $SYS_write, %eax
     int $0x80
 
-    movl $1, %ebx
-    movl $nl, %ecx
-    movl $1, %edx
-    movl $SYS_write, %eax
-    int $0x80
-
 end_s_log:
+    addl $4, %esp 
     movl -4(%ebp), %eax  
-    addl $4, %esp
     leave
     ret
 
@@ -66,10 +64,10 @@ end_s_log:
 # String functions
 #
 
-/*
- *  _sig_:size_t s_strlen(const char *str);
- *  @in str
- *  @out %eax [length of given string]
+/**
+ *  \fn size_t s_strlen(const char *str);
+ *  @param str
+ *  @return %eax [length of given string]
  */
 ENTRY s_strlen
     pushl %ebp
@@ -92,12 +90,12 @@ endstrlen:
     leave
     ret
 
-/*
- *  _sig_:size_t s_strncmp(const char *s1, const char *s2, size_t n);
- *  @in 8(%esp) [s1]
- *  @in 12(%esp) [s2]
- *  @in 16(%esp) [n]
- *  @out %eax [result]
+/**
+ *  \fn size_t s_strncmp(const char *s1, const char *s2, size_t n);
+ *  @param 8(%esp) [s1]
+ *  @param 12(%esp) [s2]
+ *  @param 16(%esp) [n]
+ *  @return %eax [result]
  */
 ENTRY s_strncmp
     pushl %ebp
@@ -123,17 +121,16 @@ endstrncmp:
 # Number & math & bit functions
 #
 
-/*
- *  _sig_:int s_mod(unsigned int x, unsigned int y);
- *  @in 8(%esp) [x]
- *  @in 12(%esp) [y]
- *  @out %ax [remainder]
+/**
+ *  \fn int s_mod(unsigned int x, unsigned int y);
+ *  @param 8(%esp) [x]
+ *  @param 12(%esp) [y]
+ *  @return %ax [remainder]
  */
 ENTRY s_mod
     pushl %ebp
     movl %esp, %ebp
 
-    # mod goes here
     xor %dx, %dx
     xorl %eax, %eax
     
@@ -141,17 +138,17 @@ ENTRY s_mod
     mov 12(%ebp), %bx   
     div %bx             
 
-    # save return, pad 0
-    movzwl %dx, %eax       
+    movzwl %dx, %eax /**< save return, 0 padding */      
 
     leave
     ret
 
-/*
- *  _sig_:int s_bitscandw(int direction, int dword);
- *  @in 8(%esp) [direction]
- *  @in 12(%esp) [dword]
- *  @out %eax [offset]   
+/**
+ * 
+ * \fn int s_bitscandw(int direction, int dword);
+ *  @param 8(%esp) [direction]
+ *  @param 12(%esp) [dword]
+ *  @return %eax [offset]   
  */
 ENTRY s_bitscandw
     pushl %ebp
@@ -162,53 +159,119 @@ ENTRY s_bitscandw
     movl 8(%esp), %edi
     movl 12(%esp), %esi
 
-    # add space
-    subl $4, %esp
+    #movl %edi, %eax
+    #jmp .teste
 
-    # save dword into local storage
-    movl %esi, -4(%ebp)
 
-    # will reuse %esi later
-    xorl %esi, %esi
+    subl $4, %esp /**< save space */
+
+    #movl %esi, %eax
+    #jmp .end
+
+    movl %esi, -4(%ebp) /**< save dword in local var */
+
+    /**
+     * will reuse %esi ahead
+     */
+    xorl %esi, %esi 
 
     cmpl $bforward, %edi
     je .bsfl
     cmpl $breverse, %edi
     je .bsrl
 
-    # invalid argument
+    /**
+     * Invalid argument
+     */
     jmp .unset
 
-.bsfl: # forward
+.bsfl: /**< forward */
     bsfl -4(%ebp), %esi
     jz .unset
     movl %esi, %eax
     jmp .end
 
-.bsrl: # reverse
+.bsrl: /**< reverse */
     bsrl -4(%ebp), %esi
     jz .unset
     movl %esi, %eax
     jmp .end
 
-# Argument is zero or invalid
+/**
+ * Argument is zero or invalid
+ */
 .unset:
     movl $-1, %eax
 .end:
     addl $4, %esp
+.teste:
     leave 
     ret
+
+/**
+ * 
+ * \fn int s_bitscanw(int direction, unsigned short word);
+ *  @param 8(%esp) [direction]
+ *  @param 12(%esp) [word]
+ *  @return %eax [offset]   
+ */
+ENTRY s_bitscanw
+    pushl %ebp
+    movl %esp, %ebp
+
+    xorl %ecx, %ecx
+
+    movl 8(%esp), %esi 
+    movw 12(%esp), %cx
+
+    movzwl %cx, %edi 
+    pushl %edi
+    pushl %esi
+    
+    call s_bitscandw
+    addl $8, %esp
+
+    leave 
+    ret
+
+
+/**
+ * 
+ * \fn int s_bitscanb(int direction, unsigned char byte);
+ *  @param 8(%esp) [direction]
+ *  @param 12(%esp) [bye]
+ *  @return %eax [offset]   
+ */
+ENTRY s_bitscanb
+    pushl %ebp
+    movl %esp, %ebp
+    
+    xorl %ecx, %ecx
+
+    movl 8(%esp), %esi
+    movb 12(%esp), %cl
+
+    movzbl %cl, %edi 
+
+    pushl %edi
+    pushl %esi
+    call s_bitscandw
+    addl $8, %esp
+.bye:
+    leave
+    ret
+
 
 #
 # Memory utilities functions
 #
 
-/*
- *  _sig_:int s_memset(void *s, int c, size_t n);
- *  @in 8(%esp) [s]
- *  @in 12(%esp) [c]
- *  @in 16(%esp) [n]
- *  @out %eax [void *]
+/**
+ *  \fn int s_memset(void *s, int c, size_t n);
+ *  @param 8(%esp) [s]
+ *  @param 12(%esp) [c]
+ *  @param 16(%esp) [n]
+ *  @return %eax [void *]
  */
 ENTRY s_memset
     pushl %ebp
