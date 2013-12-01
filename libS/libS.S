@@ -137,7 +137,6 @@ ENTRY s_mod
     mov 8(%ebp), %ax   
     mov 12(%ebp), %bx   
     div %bx             
-
     movzwl %dx, %eax /**< save return, 0 padding */      
 
     leave
@@ -153,20 +152,11 @@ ENTRY s_mod
 ENTRY s_bitscandw
     pushl %ebp
     movl %esp, %ebp
-    
     xorl %edi, %edi
 
     movl 8(%esp), %edi
     movl 12(%esp), %esi
-
-    #movl %edi, %eax
-    #jmp .teste
-
-
     subl $4, %esp /**< save space */
-
-    #movl %esi, %eax
-    #jmp .end
 
     movl %esi, -4(%ebp) /**< save dword in local var */
 
@@ -218,7 +208,6 @@ ENTRY s_bitscandw
 ENTRY s_bitscanw
     pushl %ebp
     movl %esp, %ebp
-
     xorl %ecx, %ecx
 
     movl 8(%esp), %esi 
@@ -234,7 +223,6 @@ ENTRY s_bitscanw
     leave 
     ret
 
-
 /**
  * 
  * \fn int s_bitscanb(int direction, unsigned char byte);
@@ -245,7 +233,6 @@ ENTRY s_bitscanw
 ENTRY s_bitscanb
     pushl %ebp
     movl %esp, %ebp
-    
     xorl %ecx, %ecx
 
     movl 8(%esp), %esi
@@ -261,6 +248,49 @@ ENTRY s_bitscanb
     leave
     ret
 
+/**
+ * Shift left
+ * 
+ * \fn int s_shrl(unsigned short shift, int *val);
+ *  @param 8(%esp) [shift]
+ *  @param 12(%esp) [*val]
+ *  @return %eax [shift positions]   
+ */
+ENTRY s_shrl
+    pushl %ebp
+    movl %esp, %ebp
+
+    xorl %ecx, %ecx
+    movb 8(%esp), %cl
+    movl 12(%esp), %edi
+    shrl %cl, (%edi)
+    
+    movl %ecx, %eax /**< number of shift positions */
+
+    leave
+    ret
+
+/**
+ * Shift right
+ * 
+ * \fn int s_shll(unsigned short shift, int *val);
+ *  @param 8(%esp) [shift]
+ *  @param 12(%esp) [*val]
+ *  @return %eax [shift positions]   
+ */
+ENTRY s_shll
+    pushl %ebp
+    movl %esp, %ebp
+
+    xorl %ecx, %ecx
+    movb 8(%esp), %cl
+    movl 12(%esp), %edi
+    shll %cl, (%edi)
+    
+    movl %ecx, %eax /**< number of shift positions */
+
+    leave
+    ret
 
 #
 # Memory utilities functions
@@ -288,8 +318,5 @@ ENTRY s_memset
 
     leave 
     ret
-
-
-
 
 
