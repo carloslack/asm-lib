@@ -249,7 +249,7 @@ ENTRY s_bitscanb
     ret
 
 /**
- * Shift left
+ * Shift right
  * 
  * \fn int s_shrl(unsigned short shift, int *val);
  *  @param 8(%esp) [shift]
@@ -271,7 +271,7 @@ ENTRY s_shrl
     ret
 
 /**
- * Shift right
+ * Shift left
  * 
  * \fn int s_shll(unsigned short shift, int *val);
  *  @param 8(%esp) [shift]
