@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "main.h"
 
 int main(int argc, char **argv)
@@ -13,5 +14,10 @@ int main(int argc, char **argv)
 */
     int x = func2();
     printf("%d\n", x);
+<<<<<<< HEAD
+=======
+    //char *name = getenv("USER");
+    //s_log(name);
+>>>>>>> dbb8910bb0240e31bc3241048767174b55b35b48
     return 0;
 }
