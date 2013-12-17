@@ -3,6 +3,7 @@
 
 .data
 .text
+.extern s_log
 
 /**
  * \fn int c_rk(int x, int y);
@@ -14,8 +15,19 @@ ENTRY c_rk
     movl 8(%esp), %ebx
     movl 12(%esp), %ecx
 
-    addl %ebx, %ecx
-    movl %ecx, %eax
+    subl $4, %esp
+    movl %ebx, -4(%ebp)
+
+    pushl %ecx
+    call s_log
+    addl $4, %esp
+
+    movl -4(%ebp), %ebx
+    pushl %ebx
+    call s_log
+    addl $4, %esp
+
+    movl $0, %eax
 
     leave
     ret
@@ -30,19 +42,31 @@ ENTRY c_orig
     movl 8(%esp), %ebx
     movl 12(%esp), %ecx
 
-    addl %ebx, %ecx
-    movl %ecx, %eax
+    subl $4, %esp
+    movl %ebx, -4(%ebp)
 
-    leave 
+    pushl %ecx
+    call s_log
+    addl $4, %esp
+
+    movl -4(%ebp), %ebx
+    pushl %ebx
+    call s_log
+    addl $4, %esp
+
+    movl $0, %eax
+
+    leave
     ret
 
-
-// push $c_rk
-// push $c_orig
-// push $rk_intercept
-// ret
+/* 
+ * push $c_rk
+ * push $c_orig
+ * push $rk_intercept
+ * ret
+ */
 /**
- *  \fn int rk_intercept(void *c_orig, void *c_rk, int x, int y);
+ *  \fn int rk_intercept(void *c_orig, void *c_rk, char *x, char *y);
  */
 ENTRY rk_intercept
     pushl %ebp
@@ -51,35 +75,35 @@ ENTRY rk_intercept
     movl 8(%esp), %esi #c_orig
     movl 12(%esp), %edi #c_rk
 
-    movl 16(%esp), %ebx #first arg
-    movl 20(%esp), %ecx #second arg
+    movl 16(%esp), %ecx #first arg
+    movl 20(%esp), %edx #second arg
 
-    subl $8, %esp
-    movl %ebx, -4(%ebp) #saved first
-    movl %ecx, -8(%ebp) #saved second
 
-    pushl -8(%ebp)
-    pushl -4(%ebp)
+    subl $12, %esp
+    movl %ecx, -4(%ebp) #saved first
+    movl %edx, -8(%ebp) #saved second
+    movl %esi, -12(%ebp) #save original function call
+    
+    pushl %ecx
+    pushl %edx
     call *%edi #c_rk
     addl $8, %esp
 
-    pushl -8(%ebp)
-    pushl -4(%ebp)
+    # restore previously saved registers 
+    # for use
+    movl -4(%ebp), %ecx
+    movl -8(%ebp), %edx
+    movl -12(%ebp), %esi
+
+    pushl %ecx
+    pushl %edx
     call *%esi #c_orig
     addl $8, %esp
 
+    # restore saved space
+    addl $12, %esp
 
-    addl $8, %esp
-
-
+bye:
    leave 
    ret
 
-
-
-
-    
-    
-
-    leave
-    ret
