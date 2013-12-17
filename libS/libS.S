@@ -343,10 +343,12 @@ ENTRY proxy
     ret
 
 ohoh:
-    movl $666, %eax
-    jmp ok
+    popl %eax
+    jmp bye
+
 
 mytest:
+    pushl $10
     pushl $ohoh
     ret
 /**
@@ -362,11 +364,14 @@ ENTRY func2
     #push $func1
     #pop %esi
     #call *%esi
-    pushl $bye
+    #pushl $bye
     jmp mytest
 bye:
-    popl %esi
-    call *%esi
+    #movl -12(%esp), %esi
+    #popl %edi
+
+    #call *%esi
+    #movl %ebx, %eax
 ok:
 
     leave

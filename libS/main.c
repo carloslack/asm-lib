@@ -14,10 +14,9 @@ int main(int argc, char **argv)
 */
     int x = func2();
     printf("%d\n", x);
-<<<<<<< HEAD
-=======
     //char *name = getenv("USER");
     //s_log(name);
->>>>>>> dbb8910bb0240e31bc3241048767174b55b35b48
+    int y = rk_intercept((void *)c_orig, (void *)c_rk, 10,20);
+    printf("result: %d\n", y);
     return 0;
 }
