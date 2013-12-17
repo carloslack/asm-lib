@@ -12,6 +12,8 @@
 .include "libS.inc"
 
 .section .rodata
+endfuncstrstr: .ascii "endfunc\0xa"
+entryfuncstr: .ascii "entryfunc\0xa"
 nl: .byte 0xa /**< new line */
 
 /**
@@ -317,6 +319,57 @@ ENTRY s_memset
     movl %edi, %eax
 
     leave 
+    ret
+
+ENTRY func1
+    pushl %ebp
+    movl %esp, %ebp
+
+    #movl 8(%esp), %esi
+    #pushl %esi
+    #call s_log
+    #addl $4, %esp
+
+    leave
+    ret
+
+ENTRY proxy
+
+    pushl %ebp
+    movl %esp, %ebp
+    push $func1
+    movl %ebp, %esp
+    popl %ebp
+    ret
+
+ohoh:
+    movl $666, %eax
+    jmp ok
+
+mytest:
+    pushl $ohoh
+    ret
+/**
+ *  \fn int func2(void);
+ */
+ENTRY func2
+    pushl %ebp
+    movl %esp, %ebp
+
+    #call proxy
+    #movl -8(%esp), %esi 
+    
+    #push $func1
+    #pop %esi
+    #call *%esi
+    pushl $bye
+    jmp mytest
+bye:
+    popl %esi
+    call *%esi
+ok:
+
+    leave
     ret
 
 
