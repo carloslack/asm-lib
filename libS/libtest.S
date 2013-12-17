@@ -36,6 +36,11 @@ ENTRY c_orig
     leave 
     ret
 
+
+// push $c_rk
+// push $c_orig
+// push $rk_intercept
+// ret
 /**
  *  \fn int rk_intercept(void *c_orig, void *c_rk, int x, int y);
  */
