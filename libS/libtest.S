@@ -6,24 +6,24 @@
 .extern s_log
 
 /**
- * \fn int c_rk(int x, int y);
+ * \fn int c_rk(char *x, char *y);
  */
 ENTRY c_rk
     pushl %ebp
     movl %esp, %ebp
 
-    movl 8(%esp), %ebx
-    movl 12(%esp), %ecx
+    movl 8(%esp), %ebx # first arg
+    movl 12(%esp), %ecx # second arg
 
     subl $4, %esp
-    movl %ebx, -4(%ebp)
+    movl %ecx, -4(%ebp)
 
-    pushl %ecx
+    pushl %ebx
     call s_log
     addl $4, %esp
 
-    movl -4(%ebp), %ebx
-    pushl %ebx
+    movl -4(%ebp), %ecx
+    pushl %ecx
     call s_log
     addl $4, %esp
 
@@ -33,7 +33,7 @@ ENTRY c_rk
     ret
 
 /**
- * \fn int c_orig(int x, int y);
+ * \fn int c_orig(char *x, char *y);
  */
 ENTRY c_orig
     pushl %ebp
@@ -43,14 +43,14 @@ ENTRY c_orig
     movl 12(%esp), %ecx
 
     subl $4, %esp
-    movl %ebx, -4(%ebp)
+    movl %ecx, -4(%ebp)
 
-    pushl %ecx
+    pushl %ebx
     call s_log
     addl $4, %esp
 
-    movl -4(%ebp), %ebx
-    pushl %ebx
+    movl -4(%ebp), %ecx
+    pushl %ecx
     call s_log
     addl $4, %esp
 
@@ -84,8 +84,8 @@ ENTRY rk_intercept
     movl %edx, -8(%ebp) #saved second
     movl %esi, -12(%ebp) #save original function call
     
-    pushl %ecx
     pushl %edx
+    pushl %ecx
     call *%edi #c_rk
     addl $8, %esp
 
@@ -95,8 +95,8 @@ ENTRY rk_intercept
     movl -8(%ebp), %edx
     movl -12(%ebp), %esi
 
-    pushl %ecx
     pushl %edx
+    pushl %ecx
     call *%esi #c_orig
     addl $8, %esp
 
